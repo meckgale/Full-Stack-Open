@@ -1,16 +1,16 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import DisplayPeople from "./components/DisplayPeople";
 import SearchFilter from "./components/SearchFilter";
 import AddPeople from "./components/AddPeople";
+import phoneModules from "./services/phoneModules";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
 
   useEffect(() => {
-    axios
-      .get("http://localhost:3001/persons")
-      .then((response) => setPersons(response.data));
+    phoneModules
+      .getAll()
+      .then((initialContacts) => setPersons(initialContacts));
   }, []);
 
   const [newName, setNewName] = useState("");
@@ -25,17 +25,47 @@ const App = () => {
     );
 
     if (isDuplicate) {
-      alert(`${newName} is already added to phonebook`);
-      return;
+      const person = persons.find(
+        (person) => person.name.toLowerCase() === newName.toLowerCase()
+      );
+      const updatedContact = { ...person, number: newNumber };
+      const id = person.id;
+
+      if (
+        !window.confirm(
+          `${person.name} is already added to phone book, replace old number with a new one?`
+        )
+      ) {
+        return;
+      }
+      phoneModules.updateOne(id, updatedContact).then((updatedPerson) => {
+        setPersons(
+          persons.map((person) => (person.id === id ? updatedPerson : person))
+        );
+      });
     }
 
     const personObject = {
       name: newName,
       number: newNumber,
     };
-    setPersons(persons.concat(personObject));
-    setNewName("");
-    setNewNumber("");
+    phoneModules.addOne(personObject).then((newPerson) => {
+      setPersons(persons.concat(newPerson));
+      setNewName("");
+      setNewNumber("");
+    });
+  };
+
+  const deletePerson = (event, id) => {
+    event.preventDefault();
+
+    const person = persons.find((person) => person.id === id);
+
+    if (window.confirm(`Delete ${person.name} ?`)) {
+      phoneModules.deleteOne(id).then(() => {
+        setPersons(persons.filter((person) => person.id !== id));
+      });
+    }
   };
 
   const handleNameChange = (event) => {
@@ -74,7 +104,10 @@ const App = () => {
         handleNumberChange={handleNumberChange}
       />
       <h2>Numbers</h2>
-      <DisplayPeople displayPersons={displayPersons} />
+      <DisplayPeople
+        displayPersons={displayPersons}
+        deletePerson={deletePerson}
+      />
     </div>
   );
 };
