@@ -83,6 +83,7 @@ const App = () => {
       name: newName,
       number: newNumber,
     };
+
     phoneModules.addOne(personObject).then((newPerson) => {
       setPersons(persons.concat(newPerson));
       setNotificationMessage(`Added ${personObject.name}`);
