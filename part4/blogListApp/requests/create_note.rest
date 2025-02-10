@@ -1,0 +1,10 @@
+POST http://localhost:3003/api/blogs 
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im5ld3VzZXIiLCJpZCI6IjY3YWE0OTI3OTUxZGI3YjIzYjY2ZmYwZiIsImlhdCI6MTczOTIxMzkwOX0.xqfvQAVZyNTrKzbGWvWsDoYHyFze_7ovpyd09j-qoBA
+
+{
+    "title": "post with bearer",
+    "author": "looks promising",
+    "url": "firstbearer.blog.org",
+    "likes": 1
+}
