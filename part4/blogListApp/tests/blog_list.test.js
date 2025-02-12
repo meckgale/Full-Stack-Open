@@ -8,6 +8,7 @@ const bcrypt = require('bcrypt')
 
 const Blog = require('../models/blog')
 const User = require('../models/user')
+const helper = require('./test_helper')
 
 const initialPosts = [
   {
@@ -25,13 +26,9 @@ const initialPosts = [
 ]
 
 beforeEach(async () => {
-  await Blog.deleteMany({})
+  await helper.userInit()
 
-  let blogObject = new Blog(initialPosts[0])
-  await blogObject.save()
-
-  blogObject = new Blog(initialPosts[1])
-  await blogObject.save()
+  await helper.blogInit()
 })
 
 test('posts are returned as json', async () => {
@@ -57,6 +54,8 @@ test('the unique identifier property of the blog posts is named id', async () =>
 })
 
 test('a valid blog can be posted ', async () => {
+  const token = await helper.loginAndGetToken()
+
   const newPost = {
     title: 'a valid post test',
     author: 'frank',
@@ -66,6 +65,7 @@ test('a valid blog can be posted ', async () => {
 
   await api
     .post('/api/blogs')
+    .set('Authorization', `Bearer ${token}`)
     .send(newPost)
     .expect(201)
     .expect('Content-Type', /application\/json/)
@@ -78,6 +78,8 @@ test('a valid blog can be posted ', async () => {
 })
 
 test('missing likes property will be default to 0 ', async () => {
+  const token = await helper.loginAndGetToken()
+
   const newPost = {
     title: 'a post without likes',
     author: 'jack',
@@ -86,6 +88,7 @@ test('missing likes property will be default to 0 ', async () => {
 
   await api
     .post('/api/blogs')
+    .set('Authorization', `Bearer ${token}`)
     .send(newPost)
     .expect(201)
     .expect('Content-Type', /application\/json/)
@@ -97,13 +100,19 @@ test('missing likes property will be default to 0 ', async () => {
 })
 
 test('post without title can not be added', async () => {
+  const token = await helper.loginAndGetToken()
+
   const newPost = {
     author: 'oz',
     url: 'oz@mail.com',
     likes: 5,
   }
 
-  await api.post('/api/blogs').send(newPost).expect(400)
+  await api
+    .post('/api/blogs')
+    .set('Authorization', `Bearer ${token}`)
+    .send(newPost)
+    .expect(400)
 
   const postsAtEnd = await Blog.find({})
 
@@ -111,13 +120,19 @@ test('post without title can not be added', async () => {
 })
 
 test('post without url can not be added', async () => {
+  const token = await helper.loginAndGetToken()
+
   const newPost = {
     title: 'a post without url',
     author: 'oz',
     likes: 5,
   }
 
-  await api.post('/api/blogs').send(newPost).expect(400)
+  await api
+    .post('/api/blogs')
+    .set('Authorization', `Bearer ${token}`)
+    .send(newPost)
+    .expect(400)
 
   const postsAtEnd = await Blog.find({})
 
@@ -125,10 +140,15 @@ test('post without url can not be added', async () => {
 })
 
 test('deleting a note succeeds with status code 204 if id is valid', async () => {
+  const token = await helper.loginAndGetToken()
+
   const blogsAtStart = await Blog.find({})
   const blogToDelete = blogsAtStart[0]
 
-  await api.delete(`/api/blogs/${blogToDelete.id}`).expect(204)
+  await api
+    .delete(`/api/blogs/${blogToDelete.id}`)
+    .set('Authorization', `Bearer ${token}`)
+    .expect(204)
 
   const blogsAtEnd = await Blog.find({})
 
