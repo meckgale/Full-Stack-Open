@@ -1,20 +1,21 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import NotificationError from './components/NotificationError'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import NotificationSuccess from './components/NotificationSuccess'
+import Togglable from './components/Togglable'
+import BlogForm from './components/BlogForm'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
   const [errorMessage, setErrorMessage] = useState(null)
   const [successMessage, setSuccessMessage] = useState(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
+
+  const blogFormRef = useRef()
 
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs))
@@ -31,23 +32,39 @@ const App = () => {
     }
   }, [])
 
-  const sendPost = (event) => {
-    event.preventDefault()
-    const blogObject = {
-      title: title,
-      author: author,
-      url: url,
-    }
-
+  const sendPost = (blogObject) => {
+    // event.preventDefault()
+    // const blogObject = {
+    //   title: title,
+    //   author: author,
+    //   url: url,
+    // }
+    blogFormRef.current.toggleVisibility()
     blogService.create(blogObject).then((returnedPost) => {
       setBlogs(blogs.concat(returnedPost))
-      setSuccessMessage(`a new blog ${title} by ${author} added`)
+      setSuccessMessage(
+        `a new blog ${blogObject.title} by ${blogObject.author} added`
+      )
       setTimeout(() => {
         setSuccessMessage(null)
       }, 5000)
-      setTitle('')
-      setAuthor('')
-      setUrl('')
+      // setTitle('')
+      // setAuthor('')
+      // setUrl('')
+    })
+  }
+
+  const updateBlog = (blogObject) => {
+    blogService.update(blogObject.id, blogObject).then((returnedPost) => {
+      setBlogs(
+        blogs.map((blog) => (blog.id !== returnedPost.id ? blog : returnedPost))
+      )
+    })
+  }
+
+  const deleteBlog = (blogObject) => {
+    blogService.remove(blogObject.id).then(() => {
+      setBlogs(blogs.filter((blog) => blog.id !== blogObject.id))
     })
   }
 
@@ -75,6 +92,8 @@ const App = () => {
       }, 5000)
     }
   }
+
+  const sortByLikes = (a, b) => b.likes - a.likes
 
   const loginForm = () => (
     <form onSubmit={handleLogin}>
@@ -155,9 +174,17 @@ const App = () => {
               logout
             </button>
           </p>
-          {blogForm()}
-          {blogs.map((blog) => (
-            <Blog key={blog.id} blog={blog} />
+          <Togglable buttonLabel="new note" ref={blogFormRef}>
+            {/* {blogForm()} */}
+            <BlogForm createBlog={sendPost} />
+          </Togglable>
+          {blogs.sort(sortByLikes).map((blog) => (
+            <Blog
+              key={blog.id}
+              blog={blog}
+              updateBlog={updateBlog}
+              deleteBlog={deleteBlog}
+            />
           ))}
         </div>
       )}
