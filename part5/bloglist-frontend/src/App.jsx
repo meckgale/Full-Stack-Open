@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import { jwtDecode } from 'jwt-decode'
 import Blog from './components/Blog'
 import NotificationError from './components/NotificationError'
 import blogService from './services/blogs'
@@ -14,6 +15,7 @@ const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
+  const [userId, setUserId] = useState(null)
 
   const blogFormRef = useRef()
 
@@ -27,18 +29,14 @@ const App = () => {
     )
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
+      const userId = jwtDecode(user.token).id
       setUser(user)
+      setUserId(userId)
       blogService.setToken(user.token)
     }
   }, [])
 
   const sendPost = (blogObject) => {
-    // event.preventDefault()
-    // const blogObject = {
-    //   title: title,
-    //   author: author,
-    //   url: url,
-    // }
     blogFormRef.current.toggleVisibility()
     blogService.create(blogObject).then((returnedPost) => {
       setBlogs(blogs.concat(returnedPost))
@@ -48,9 +46,6 @@ const App = () => {
       setTimeout(() => {
         setSuccessMessage(null)
       }, 5000)
-      // setTitle('')
-      // setAuthor('')
-      // setUrl('')
     })
   }
 
@@ -121,39 +116,6 @@ const App = () => {
     </form>
   )
 
-  const blogForm = () => (
-    <form onSubmit={sendPost}>
-      <div>
-        title:
-        <input
-          type="text"
-          value={title}
-          name="Title"
-          onChange={({ target }) => setTitle(target.value)}
-        />
-      </div>
-      <div>
-        author:
-        <input
-          type="text"
-          value={author}
-          name="Author"
-          onChange={({ target }) => setAuthor(target.value)}
-        />
-      </div>
-      <div>
-        url:
-        <input
-          type="text"
-          value={url}
-          name="Url"
-          onChange={({ target }) => setUrl(target.value)}
-        />
-      </div>
-      <button type="submit">create</button>
-    </form>
-  )
-
   return (
     <div>
       {user === null ? (
@@ -184,6 +146,7 @@ const App = () => {
               blog={blog}
               updateBlog={updateBlog}
               deleteBlog={deleteBlog}
+              ownerId={userId}
             />
           ))}
         </div>
