@@ -17,7 +17,7 @@ function BlogForm({ createBlog }) {
     setUrl('')
   }
   return (
-    <div>
+    <div className="formDiv">
       <h2>Create a new note</h2>
 
       <form onSubmit={sendPost}>
@@ -28,6 +28,7 @@ function BlogForm({ createBlog }) {
             value={title}
             name="Title"
             onChange={({ target }) => setTitle(target.value)}
+            placeholder="title..."
           />
         </div>
         <div>
@@ -37,6 +38,7 @@ function BlogForm({ createBlog }) {
             value={author}
             name="Author"
             onChange={({ target }) => setAuthor(target.value)}
+            placeholder="author..."
           />
         </div>
         <div>
@@ -46,6 +48,7 @@ function BlogForm({ createBlog }) {
             value={url}
             name="Url"
             onChange={({ target }) => setUrl(target.value)}
+            placeholder="type url here"
           />
         </div>
         <button type="submit">create</button>
