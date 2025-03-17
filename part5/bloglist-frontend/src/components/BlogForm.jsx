@@ -18,12 +18,13 @@ function BlogForm({ createBlog }) {
   }
   return (
     <div className="formDiv">
-      <h2>Create a new note</h2>
+      <h2>Create a new blog</h2>
 
       <form onSubmit={sendPost}>
         <div>
           title:
           <input
+            data-testid="testurl"
             type="text"
             value={title}
             name="Title"

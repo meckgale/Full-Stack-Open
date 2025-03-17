@@ -97,6 +97,7 @@ const App = () => {
       <div>
         username
         <input
+          data-testid="username"
           type="text"
           value={username}
           name="Username"
@@ -106,6 +107,7 @@ const App = () => {
       <div>
         password
         <input
+          data-testid="password"
           type="password"
           value={password}
           name="Password"
@@ -136,7 +138,7 @@ const App = () => {
               logout
             </button>
           </p>
-          <Togglable buttonLabel="new note" ref={blogFormRef}>
+          <Togglable buttonLabel="new blog" ref={blogFormRef}>
             {/* {blogForm()} */}
             <BlogForm createBlog={sendPost} />
           </Togglable>
