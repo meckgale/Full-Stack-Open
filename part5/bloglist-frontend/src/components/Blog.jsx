@@ -34,6 +34,8 @@ const Blog = ({ blog, updateBlog, deleteBlog, ownerId }) => {
     backgroundColor: 'DodgerBlue',
   }
 
+  const isOwner = blog.user?.id === ownerId || blog.user === ownerId
+
   return (
     <div style={blogStyle}>
       <div style={hideWhenVisible}>
@@ -46,11 +48,14 @@ const Blog = ({ blog, updateBlog, deleteBlog, ownerId }) => {
           <button onClick={() => setLoginVisible(false)}>hide</button>
         </p>
         <p>{blog.url}</p>
-        <p>
-          {blog.likes} <button onClick={updateLike}>like</button>
+        <p className="likes">
+          {blog.likes}{' '}
+          <button data-testid="like-button" onClick={updateLike}>
+            like
+          </button>
         </p>
         <p>{blog.author}</p>
-        {ownerId === blog.user?.id && (
+        {isOwner && (
           <button style={buttonStyle} onClick={removePost}>
             remove
           </button>
@@ -64,7 +69,7 @@ Blog.propTypes = {
   blog: PropTypes.object.isRequired,
   updateBlog: PropTypes.func.isRequired,
   deleteBlog: PropTypes.func.isRequired,
-  ownerId: PropTypes.string.isRequired,
+  ownerId: PropTypes.string,
 }
 
 export default Blog

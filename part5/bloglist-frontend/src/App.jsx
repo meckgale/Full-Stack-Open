@@ -15,7 +15,6 @@ const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  const [userId, setUserId] = useState(null)
 
   const blogFormRef = useRef()
 
@@ -30,8 +29,7 @@ const App = () => {
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
       const userId = jwtDecode(user.token).id
-      setUser(user)
-      setUserId(userId)
+      setUser({ ...user, id: userId })
       blogService.setToken(user.token)
     }
   }, [])
@@ -51,8 +49,14 @@ const App = () => {
 
   const updateBlog = (blogObject) => {
     blogService.update(blogObject.id, blogObject).then((returnedPost) => {
+      const updatedPost = {
+        ...returnedPost,
+        user:
+          blogs.find((blog) => blog.id === returnedPost.id)?.user ||
+          returnedPost.user,
+      }
       setBlogs(
-        blogs.map((blog) => (blog.id !== returnedPost.id ? blog : returnedPost))
+        blogs.map((blog) => (blog.id !== returnedPost.id ? blog : updatedPost))
       )
     })
   }
@@ -71,13 +75,14 @@ const App = () => {
         username,
         password,
       })
+      const userId = jwtDecode(user.token).id
 
       window.localStorage.setItem(
         'loggedBlogListAppppUser',
         JSON.stringify(user)
       )
       blogService.setToken(user.token)
-      setUser(user)
+      setUser({ ...user, id: userId })
       setUsername('')
       setPassword('')
     } catch (exception) {
@@ -148,7 +153,7 @@ const App = () => {
               blog={blog}
               updateBlog={updateBlog}
               deleteBlog={deleteBlog}
-              ownerId={userId}
+              ownerId={user.id}
             />
           ))}
         </div>
