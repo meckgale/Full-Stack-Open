@@ -1,0 +1,66 @@
+{
+  "notes": [
+    {
+      "id": 1,
+      "content": "custom-hooks are awesome!"
+    },
+    {
+      "id": 2,
+      "content": "best feature ever <3"
+    },
+    {
+      "content": "quite good",
+      "id": 3
+    },
+    {
+      "content": "fetching after post request ",
+      "id": 4
+    },
+    {
+      "content": "not works as expected",
+      "id": 5
+    },
+    {
+      "content": "baseUrl",
+      "id": 6
+    },
+    {
+      "content": "",
+      "id": 7
+    },
+    {
+      "content": "",
+      "id": 8
+    },
+    {
+      "content": "new",
+      "id": 9
+    },
+    {
+      "content": "old",
+      "id": 10
+    }
+  ],
+  "persons": [
+    {
+      "id": 1,
+      "name": "mluukkai",
+      "number": "040-5483923"
+    },
+    {
+      "id": 2,
+      "name": "hellas",
+      "number": "012-123123"
+    },
+    {
+      "name": "meck",
+      "number": "357-3526712",
+      "id": 3
+    },
+    {
+      "name": "name",
+      "number": "number",
+      "id": 4
+    }
+  ]
+}
