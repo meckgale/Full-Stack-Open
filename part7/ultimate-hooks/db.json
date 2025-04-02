@@ -13,32 +13,8 @@
       "id": 3
     },
     {
-      "content": "fetching after post request ",
+      "content": "works as expected",
       "id": 4
-    },
-    {
-      "content": "not works as expected",
-      "id": 5
-    },
-    {
-      "content": "baseUrl",
-      "id": 6
-    },
-    {
-      "content": "",
-      "id": 7
-    },
-    {
-      "content": "",
-      "id": 8
-    },
-    {
-      "content": "new",
-      "id": 9
-    },
-    {
-      "content": "old",
-      "id": 10
     }
   ],
   "persons": [
@@ -58,8 +34,8 @@
       "id": 3
     },
     {
-      "name": "name",
-      "number": "number",
+      "name": "another user",
+      "number": "123-4353221",
       "id": 4
     }
   ]
