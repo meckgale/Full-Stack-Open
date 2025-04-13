@@ -5,6 +5,10 @@ const schema = mongoose.Schema({
   author: String,
   url: String,
   likes: Number,
+  comments: {
+    type: [String],
+    default: [], // This ensures comments is always initialized as an empty array
+  },
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',

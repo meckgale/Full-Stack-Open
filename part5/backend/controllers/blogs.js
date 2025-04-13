@@ -25,6 +25,7 @@ router.post('/', userExtractor, async (request, response) => {
 
   blog.likes = blog.likes | 0
   blog.user = user
+  blog.comments = Array.isArray(blog.comments) ? blog.comments : []
   user.blogs = user.blogs.concat(blog._id)
 
   await user.save()
@@ -65,12 +66,33 @@ router.put('/:id', async (request, response) => {
     author: body.author,
     url: body.url,
     likes: body.likes,
+    comments: body.comments,
   }
 
   const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, blog, {
     new: true,
   })
   response.json(updatedBlog)
+})
+
+router.post('/:id/comments', async (request, response) => {
+  const { comment } = request.body
+
+  if (!comment) {
+    return response.status(400).json({ error: 'comment content missing' })
+  }
+
+  const blog = await Blog.findById(request.params.id)
+
+  if (!blog) {
+    return response.status(400).json({ error: 'blog not found' })
+  }
+
+  blog.comments = blog.comments.concat(comment)
+
+  const savedBlog = await blog.save()
+
+  response.status(201).json(savedBlog)
 })
 
 module.exports = router
