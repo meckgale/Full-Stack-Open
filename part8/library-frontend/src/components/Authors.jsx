@@ -40,7 +40,7 @@ const Authors = (props) => {
           </tbody>
         </table>
       </div>
-      <UpdateAuthor show={props.show} />
+      {props.isLoggedIn && <UpdateAuthor show={props.show} />}
     </>
   )
 }

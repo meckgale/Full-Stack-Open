@@ -9,7 +9,21 @@ const UpdateAuthor = (props) => {
   const { data, loading, error } = useQuery(ALL_AUTHORS)
 
   const [editAuthor] = useMutation(UPDATE_AUTHOR, {
-    refetchQueries: [{ query: ALL_AUTHORS }],
+    update: (cache, { data: responseData }) => {
+      cache.updateQuery({ query: ALL_AUTHORS }, ({ allAuthors }) => {
+        if (!allAuthors || !responseData?.editAuthor) {
+          return { allAuthors }
+        }
+
+        const updatedAuthor = responseData.editAuthor
+
+        return {
+          allAuthors: allAuthors.map((author) =>
+            author.id === updatedAuthor.id ? updatedAuthor : author
+          ),
+        }
+      })
+    },
   })
 
   if (!props.show) {
